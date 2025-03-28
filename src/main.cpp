@@ -8,10 +8,12 @@ CameraOV7670 camera(CameraOV7670::RESOLUTION_QQVGA_160x120, CameraOV7670::PIXEL_
 uint8_t mean = 127;
 float factor = 1.5;
 
-uint8_t contrastFilter(uint8_t value) {
-  // return value;
-  value = 1.5 * (value - 45);
-  return value < 0 ? 0 : value > 255 ? 255 : value;
+uint8_t contrastFilter(uint8_t x) {
+  // uint8_t t = x - 127;
+  // uint8_t y = 2*x - 127 + 20;
+  // y = y < 0 ? 0 : y;
+  // y = y > 255 ? 255 : y;
+  return x;
 }
 
 void setup() {
