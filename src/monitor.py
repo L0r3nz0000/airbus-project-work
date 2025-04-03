@@ -54,7 +54,7 @@ try:
             cv2.imshow("Image", resized_image)
             cv2.waitKey(1)
             
-            print("done ({} bytes)".format(len(image)))
+            print("done ({} bytes)".format(len(image)*len(image[0])))
           else:
             print("❌ Errore: Pixel format non supportato")
             exit(1)

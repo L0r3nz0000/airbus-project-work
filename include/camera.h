@@ -119,7 +119,7 @@ void processGrayscaleFrameBuffered(CameraOV7670 &camera) {
   };
 }
 
-void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
+void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t, int, int)) {
   camera.waitForVsync();
   camera.ignoreVerticalPadding();
 
@@ -131,8 +131,7 @@ void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
       // Leggi il primo pixel (Y0)
       camera.waitForPixelClockRisingEdge();
       camera.readPixelByte(lineBuffer[x]);
-      //lineBuffer[x] = formatPixelByteGrayscaleFirst(lineBuffer[x]);
-      lineBuffer[x] = filter(lineBuffer[x]);
+      lineBuffer[x] = formatPixelByteGrayscaleFirst(filter(lineBuffer[x], x, y));
       
       // Salta il byte di crominanza blu (U)
       camera.waitForPixelClockRisingEdge();
@@ -141,8 +140,8 @@ void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
       // Leggi il secondo pixel (Y1)
       camera.waitForPixelClockRisingEdge();
       camera.readPixelByte(lineBuffer[x+1]);
-      //lineBuffer[x+1] = formatPixelByteGrayscaleSecond(lineBuffer[x]);
-      lineBuffer[x+1] = filter(lineBuffer[x+1]);
+      lineBuffer[x+1] = formatPixelByteGrayscaleSecond(filter(lineBuffer[x+1], x+1, y));
+      
       sendPixelFromBuffer();
 
       // Salta il byte di crominanza rossa (V)
@@ -158,7 +157,7 @@ void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
 }
 
 // this is called in Arduino loop() function
-void processFrame(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
+void processFrame(CameraOV7670 &camera, uint8_t (*filter)(uint8_t, int, int)) {
   processedByteCountDuringCameraRead = 0;
   commandStartNewFrame(uartPixelFormat);
   noInterrupts();
