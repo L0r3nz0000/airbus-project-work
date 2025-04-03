@@ -91,7 +91,7 @@ void processGrayscaleFrameBuffered(CameraOV7670 &camera) {
       camera.readPixelByte(lineBuffer[x]);
       lineBuffer[x] = formatPixelByteGrayscaleFirst(lineBuffer[x]);
 
-      camera.waitForPixelClockRisingEdge(); // YUV422 color byte. Ignore.
+      camera.waitForPixelClockRisingEdge(); // YUV422 color byte.
       if (isSendWhileBuffering) {
         sendPixelFromBuffer();
       }
@@ -101,7 +101,7 @@ void processGrayscaleFrameBuffered(CameraOV7670 &camera) {
       camera.readPixelByte(lineBuffer[x]);
       lineBuffer[x] = formatPixelByteGrayscaleSecond(lineBuffer[x]);
 
-      camera.waitForPixelClockRisingEdge(); // YUV422 color byte. Ignore.
+      camera.waitForPixelClockRisingEdge(); // YUV422 color byte.
       if (isSendWhileBuffering) {
         sendPixelFromBuffer();
       }
@@ -134,7 +134,7 @@ void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
       //lineBuffer[x] = formatPixelByteGrayscaleFirst(lineBuffer[x]);
       lineBuffer[x] = filter(lineBuffer[x]);
       
-      // Salta il byte di crominanza (U)
+      // Salta il byte di crominanza blu (U)
       camera.waitForPixelClockRisingEdge();
       sendPixelFromBuffer();
 
@@ -145,7 +145,7 @@ void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t)) {
       lineBuffer[x+1] = filter(lineBuffer[x+1]);
       sendPixelFromBuffer();
 
-      // Salta il byte di crominanza (V)
+      // Salta il byte di crominanza rossa (V)
       camera.waitForPixelClockRisingEdge();
     }
     

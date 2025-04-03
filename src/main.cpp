@@ -21,11 +21,5 @@ void setup() {
 }
 
 void loop() {
-  debugPrint("inizio");
   processFrame(camera, contrastFilter);
-  debugPrint("fine");
-
-  // processFilter(camera);
-  // sendFrameOverSerial();
-  //blackRectangle(20, 20, 100, 100);
 }
