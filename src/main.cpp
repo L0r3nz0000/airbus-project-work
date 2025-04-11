@@ -6,35 +6,52 @@ CameraOV7670 camera(CameraOV7670::RESOLUTION_QQVGA_160x120, CameraOV7670::PIXEL_
 
 // x: 152 y: 88; x: 222 y: 106
 typedef struct {
-  int x1, x2, x3, x4;
+  int x1, y1, x2, y2;
 } Rettangolo;
 
-int posizione_display_x = 85, posizione_display_y = 48;
+int posizione_display_x = 326, posizione_display_y = 105;
 
 Rettangolo segmenti[] = {
-  { 152, 222, 88, 106 },  // A
-  { 224, 102, 234, 152 }, // B
-  { 209, 187, 215, 249 }, // C
-  { 128, 251, 194, 267 }, // D
-  { 118, 188, 126, 246 }, // E
-  { 133, 99, 140, 159 },  // F
-  { 142, 165, 202, 185 }, // G
+  {  67, 174,  3,  58 },  // A
+  { 139,  54, 149, 104 }, // B
+  { 124, 139, 130, 201 }, // C
+  {  43, 203, 109, 219 }, // D
+  {  33, 140,  41, 198 }, // E
+  {  48,  51,  55, 111 }, // F
+  {  57, 117, 117, 137 }, // G
 };
 
 /*
 la funzione filter viene chiamata per ogni pixel e deve capire in quale segmento sta per calcolarne la relativa media
 */
 
+int media_segmenti[sizeof(segmenti) / sizeof(Rettangolo)] = {0};
+int media_segmenti_count[sizeof(segmenti) / sizeof(Rettangolo)] = {0};
+
 uint8_t filter(uint8_t pixel, int x, int y) {
-  for (int i = 0; i < sizeof(segmenti) / sizeof(Rettangolo); i++) {
-    if (x >= segmenti[i].x1 && x <= segmenti[i].x2 && y >= segmenti[i].x3 && y <= segmenti[i].x4) {
-      return 0;
-    }
-  }
+  // for (uint8_t i = 0; i < sizeof(segmenti) / sizeof(Rettangolo); i++) {
+  //   if (x >= segmenti[i].x1 && x <= segmenti[i].y1 && y >= segmenti[i].x2 && y <= segmenti[i].y2) {
+  //     media_segmenti[i] += pixel;
+  //     media_segmenti_count[i]++;
+  //     if (media_segmenti_count[i] > 0) {
+  //       media_segmenti[i] /= media_segmenti_count[i];
+  //     }
+  //     if (media_segmenti_count[i] > 100) {
+  //       media_segmenti_count[i] = 0;
+  //       media_segmenti[i] = 0;
+  //     }
+  //   }
+  // }
   return pixel;
 }
 
 void setup() {
+  for (uint8_t i = 0; i < sizeof(segmenti) / sizeof(Rettangolo); i++) {
+    segmenti[i].x1 += posizione_display_x;
+    segmenti[i].y1 += posizione_display_y;
+    segmenti[i].x2 += posizione_display_x;
+    segmenti[i].y2 += posizione_display_y;
+  }
   initializeCamera(camera);
 }
 
