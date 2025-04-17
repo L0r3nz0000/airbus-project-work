@@ -1,6 +1,7 @@
 import serial
 import numpy as np
 import cv2
+import time
 
 # Configura la porta seriale
 port = '/dev/ttyACM0'
@@ -43,6 +44,8 @@ def media_segmento(frame, x1, y1, x2, y2):
   punti = (y2 - y1 + 1) * (x2 - x1 + 1)
   return (media / punti) / 255 if punti > 0 else 0
 
+start_time = time.time()
+
 try:
   ser = serial.Serial(port, baudrate, timeout=0)
   print(f"Connesso a {port} a {baudrate} baud")
@@ -64,6 +67,8 @@ try:
           height = (data[3] << 8) | data[2]
           pixel_format = data[4]
 
+          print(f"fps: {1 / (time.time() - start_time)}")
+          start_time = time.time()
           print(f"* Nuovo frame - Width: {width}, Height: {height}, Pixel format: {pixel_format}")
           if pixel_format == PIXEL_FORMAT_GRAYSCALE:
             frame_counter += 1

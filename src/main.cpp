@@ -56,5 +56,11 @@ void setup() {
 }
 
 void loop() {
+  int start = millis();
   processFrame(camera, filter);
+  int end = millis();
+
+  if (end - start < 500) {
+    delay(500 - (end - start));
+  }
 }

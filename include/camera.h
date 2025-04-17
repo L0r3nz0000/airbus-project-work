@@ -132,7 +132,7 @@ void processFilter(CameraOV7670 &camera, uint8_t (*filter)(uint8_t, int, int)) {
       camera.waitForPixelClockRisingEdge();
       camera.readPixelByte(lineBuffer[x]);
       lineBuffer[x] = formatPixelByteGrayscaleFirst(filter(lineBuffer[x], x, y));
-      
+
       // Salta il byte di crominanza blu (U)
       camera.waitForPixelClockRisingEdge();
       sendPixelFromBuffer();
