@@ -2,6 +2,8 @@
 #include <math.h>
 #include "camera.h"
 
+#define CLOCK 10
+
 CameraOV7670 camera(CameraOV7670::RESOLUTION_QQVGA_160x120, CameraOV7670::PIXEL_YUV422, 4);
 
 // x: 152 y: 88; x: 222 y: 106
@@ -45,6 +47,35 @@ uint8_t filter(uint8_t pixel, int x, int y) {
   return pixel;
 }
 
+void changeNumber() {
+  digitalWrite(CLOCK, HIGH);
+  delay(1);
+  digitalWrite(CLOCK, LOW);
+
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(100);
+  digitalWrite(LED_BUILTIN, LOW);
+}
+
+void resetNumbers() {
+  digitalWrite(LED_BUILTIN, HIGH);
+  delay(200);
+  digitalWrite(LED_BUILTIN, LOW);
+  
+  // reset
+  digitalWrite(CLOCK, HIGH);
+  delay(200);
+  digitalWrite(CLOCK, LOW);
+}
+
+void waitForNullByte() {
+  while (1) {
+    if (UCSR0A & (1 << RXC0)) {  // se un byte è stato ricevuto
+      if (UDR0 == 0x00) break;   // esci solo se è 0x00
+    }
+  }
+}
+
 void setup() {
   for (uint8_t i = 0; i < sizeof(segmenti) / sizeof(Rettangolo); i++) {
     segmenti[i].x1 += posizione_display_x;
@@ -53,14 +84,17 @@ void setup() {
     segmenti[i].y2 += posizione_display_y;
   }
   initializeCamera(camera);
+  pinMode(CLOCK, OUTPUT);
+  digitalWrite(CLOCK, LOW);
+
+  pinMode(LED_BUILTIN, OUTPUT);
+  resetNumbers();
 }
 
 void loop() {
-  int start = millis();
-  processFrame(camera, filter);
-  int end = millis();
+  waitForNullByte();
 
-  if (end - start < 500) {
-    delay(500 - (end - start));
-  }
+  processFrame(camera, filter);
+  changeNumber();
+  //delay(800);
 }
